@@ -41,12 +41,12 @@ export function SignInPageHtml() {
  * @param {string} room
  * @param {string} username
  */
-export function HomePageHtml(room, username) {
+export function HomePageHtml(room) {
   return `
     <div id="home">
       <header>
         <h1>${room}</h1>
-        <p>${username}</p>
+        <div id="active-users"></div>
       </header>
 
       <main>

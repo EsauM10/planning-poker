@@ -115,8 +115,25 @@ function render(content) {
     }
 }
 
-function renderHomePage(room, username) {
-  render(HomePageHtml(room, username))
+function renderActiveUsers() {
+  const container = document.getElementById("active-users")
+  if (!container) return
+
+  const users = userData.room.users || {}
+  container.innerHTML = ""
+
+  Object.entries(users).forEach(([name, active]) => {
+    if (!active) return
+    const span = document.createElement("span")
+    span.classList.add("user-avatar")
+    span.textContent = name.charAt(0).toUpperCase()
+    span.title = name
+    container.appendChild(span)
+  })
+}
+
+function renderHomePage(room) {
+  render(HomePageHtml(room))
   renderCardButtons()
   updateRevealButton(room)
 
@@ -207,11 +224,12 @@ function updateRevealButton() {
 function upsertUserInDB(room, username) {
     const showVotesRef = getDatabaseRef(`${scheme.rooms}/${room}/show_votes`)
     const votesRef = getDatabaseRef(`${scheme.rooms}/${room}/${scheme.votes}`)
+    const usersRef = getDatabaseRef(`${scheme.rooms}/${room}/${scheme.users}`)
 
     createUser(room, username)
-    
+
     userData.username = username
-    renderHomePage(room, username)
+    renderHomePage(room)
 
     onValue(showVotesRef, (snapshot) => {
         userData.room.show_votes = snapshot.val()
@@ -225,6 +243,11 @@ function upsertUserInDB(room, username) {
     onValue(votesRef, (snapshot) => {
         userData.room.votes = snapshot.val() || {}
         renderUserVoteCards()
+    })
+
+    onValue(usersRef, (snapshot) => {
+        userData.room.users = snapshot.val() || {}
+        renderActiveUsers()
     })
 }
 
