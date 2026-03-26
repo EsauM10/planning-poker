@@ -231,6 +231,10 @@ function upsertUserInDB(room, username) {
     userData.username = username
     renderHomePage(room)
 
+    window.addEventListener("beforeunload", () => {
+        disconnectUser(room, username)
+    })
+
     onValue(showVotesRef, (snapshot) => {
         userData.room.show_votes = snapshot.val()
         renderUserVoteCards()
