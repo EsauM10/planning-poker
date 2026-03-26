@@ -49,6 +49,7 @@ async function fetchRoom(room) {
       userData.room = data
       userData.room['name'] = room
   } catch (error) {
+    userData.room = null
     console.error("Room não encontrado.");
   }
 }
